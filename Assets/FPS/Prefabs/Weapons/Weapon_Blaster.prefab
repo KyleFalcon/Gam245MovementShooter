@@ -177,7 +177,7 @@ MonoBehaviour:
   WeaponName: Pistol
   WeaponIcon: {fileID: 21300000, guid: 3c187e19c32c13542ba8a0c1a3a88ece, type: 3}
   CrosshairDataDefault:
-    CrosshairSprite: {fileID: 21300000, guid: 2b5b80f3ebc88174a8c662e280fdb09c, type: 3}
+    CrosshairSprite: {fileID: 21300000, guid: 6e279173c7e6446bfbf2744726e35598, type: 3}
     CrosshairSize: 20
     CrosshairColor: {r: 1, g: 1, b: 1, a: 0.38431373}
   CrosshairDataTargetInSight:
