@@ -45,6 +45,7 @@ public class PlayerMovement : MonoBehaviour {
     //Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
+    private float slideTimer = 1f;
 
     void Awake() {
         rb = GetComponent<Rigidbody>();
@@ -74,10 +75,13 @@ public class PlayerMovement : MonoBehaviour {
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
-      
+
+
         //Crouching
         if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
             StartCrouch();
+        }
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
     }
@@ -90,11 +94,13 @@ public class PlayerMovement : MonoBehaviour {
                 rb.AddForce(orientation.transform.forward * slideForce);
             }
         }
+        
     }
 
     private void StopCrouch() {
         transform.localScale = playerScale;
         transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+        slideTimer = 1f;
     }
 
     private void Movement() {
@@ -106,7 +112,7 @@ public class PlayerMovement : MonoBehaviour {
         float xMag = mag.x, yMag = mag.y;
 
         //Counteract sliding and sloppy movement
-        //CounterMovement(x, y, mag);
+        CounterMovement(x, y, mag);
         
         //If holding jump && ready to jump, then jump
         if (readyToJump && jumping) Jump();
@@ -134,13 +140,15 @@ public class PlayerMovement : MonoBehaviour {
             multiplier = 0.5f;
             multiplierV = 0.5f;
         }
-        
+
+
         // Movement while sliding
         if (grounded && crouching) multiplierV = 0f;
 
         //Apply forces to move player
         rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
         rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+        slideTimer -= Time.deltaTime;
     }
 
     private void Jump() {
