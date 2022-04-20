@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour {
     public float maxSlopeAngle = 35f;
 
     //Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
+    private Vector3 crouchScale = new Vector3(1, 0.8f, 1);
     private Vector3 playerScale;
     public float slideForce = 400;
     public float slideCounterMovement = 0.2f;
@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void StartCrouch() {
         transform.localScale = crouchScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - 0.8f, transform.position.z);
         if (rb.velocity.magnitude > 0.5f) {
             if (grounded) {
                 rb.AddForce(orientation.transform.forward * slideForce);
@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void StopCrouch() {
         transform.localScale = playerScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
         slideTimer = 1f;
     }
 
@@ -155,6 +155,7 @@ public class PlayerMovement : MonoBehaviour {
         if (grounded && readyToJump) {
             readyToJump = false;
 
+            
             //Add jump forces
             rb.AddForce(Vector2.up * jumpForce * 1.5f);
             rb.AddForce(normalVector * jumpForce * 0.5f);
