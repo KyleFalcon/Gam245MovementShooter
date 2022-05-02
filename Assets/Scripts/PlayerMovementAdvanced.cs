@@ -6,8 +6,14 @@ public class PlayerMovementAdvanced : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    public float runSpeed;
 
     public float groundDrag;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    private float slideSpeed;
+
 
     public float jumpForce;
     public float jumpCooldown;
@@ -45,7 +51,14 @@ public class PlayerMovementAdvanced : MonoBehaviour
 
     Rigidbody rb;
 
-    // Start is called before the first frame update
+    public MovementState state;
+
+    public enum MovementState
+    {
+        running,
+        air,
+        sliding
+    }
     void Start()
     {
         readyToDash = true;
@@ -58,19 +71,20 @@ public class PlayerMovementAdvanced : MonoBehaviour
     void Update()
     {
         //grounded = Physics.CheckSphere(groundCheck.position, groundDistance, ground);
-        Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.2f), Color.blue);
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
+        //Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.2f), Color.blue);
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, ground);
 
         MyInput();
         SpeedControl();
         if (grounded)
         {
             rb.drag = groundDrag;
+            //ResetJump();
         }
         else
         {
             rb.drag = 0;
-            readyToJump = false;
+            //readyToJump = false;
         }
     }
 
@@ -100,22 +114,39 @@ public class PlayerMovementAdvanced : MonoBehaviour
         }
     }
 
+    private void StateHandler()
+    {
+        if (grounded)
+        {
+            state = MovementState.running;
+            moveSpeed = runSpeed;
+        }
+
+        else
+        {
+            state = MovementState.air;
+        }
+    }
     private void MovePlayer()
     {
+        StateHandler();
         //Movement Direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         
         //Slope Handling 
         slopeCheck = OnSlope();
-        if (OnSlope() && !exitingSlope) { 
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 10f, ForceMode.Force);
+        if (!exitingSlope && OnSlope()) {
+            Debug.DrawRay(transform.position, Vector3.down * slopeHit.distance, Color.green);
+
+            rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f, ForceMode.Force);
 
             if(rb.velocity.y > 0)
             {
                 rb.AddForce(Vector3.down * 120f, ForceMode.Force);
             }
+
         }
-        rb.useGravity = !OnSlope();
+        Debug.DrawRay(transform.position, Vector3.down * slopeHit.distance, Color.red);
 
         if (grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
@@ -123,7 +154,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
         else if(!grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
 
-        
+        rb.useGravity = !OnSlope();
     }
 
     private void SpeedControl()
@@ -176,21 +207,19 @@ public class PlayerMovementAdvanced : MonoBehaviour
         readyToDash = true;
     }
 
-    private bool OnSlope()
+    public bool OnSlope()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f))
-        {
-            Debug.DrawRay(transform.position, Vector3.down * slopeHit.distance, Color.green);
-           
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.4f))
+        {  
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
         }
-        Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.3f), Color.red);
+        
         return false;
     }
 
-    private Vector3 GetSlopeMoveDirection()
+    public Vector3 GetSlopeMoveDirection(Vector3 direction)
     {
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
 }
