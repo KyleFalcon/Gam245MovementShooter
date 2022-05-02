@@ -32,6 +32,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
     [Header("Slope Handling")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
+    public bool exitingSlope;
     
     public bool slopeCheck;
 
@@ -57,6 +58,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
     void Update()
     {
         //grounded = Physics.CheckSphere(groundCheck.position, groundDistance, ground);
+        Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.2f), Color.blue);
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
 
         MyInput();
@@ -64,7 +66,6 @@ public class PlayerMovementAdvanced : MonoBehaviour
         if (grounded)
         {
             rb.drag = groundDrag;
-            ResetJump();
         }
         else
         {
@@ -87,7 +88,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
             readyToJump = false;
             Jump();
 
-            //Invoke(nameof(ResetJump), jumpCooldown);
+            Invoke(nameof(ResetJump), jumpCooldown);
         }
 
         if (Input.GetKeyDown(dashKey) && readyToDash)
@@ -103,45 +104,62 @@ public class PlayerMovementAdvanced : MonoBehaviour
     {
         //Movement Direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        
+        //Slope Handling 
         slopeCheck = OnSlope();
-        if (OnSlope()) { 
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 40f, ForceMode.Force);
+        if (OnSlope() && !exitingSlope) { 
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 10f, ForceMode.Force);
 
             if(rb.velocity.y > 0)
             {
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+                rb.AddForce(Vector3.down * 120f, ForceMode.Force);
             }
         }
+        rb.useGravity = !OnSlope();
 
-        if(grounded)
+        if (grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
         else if(!grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
 
-        rb.useGravity = !OnSlope();
+        
     }
 
     private void SpeedControl()
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if(flatVel.magnitude > moveSpeed)
+        if (OnSlope())
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            if (rb.velocity.magnitude > moveSpeed)
+                rb.velocity = rb.velocity.normalized * moveSpeed;
+        }
+        else
+        {
+            if (flatVel.magnitude > moveSpeed)
+            {
+                Vector3 limitedVel = flatVel.normalized * moveSpeed;
+                rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            }
         }
     }
 
     private void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        exitingSlope = true;
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+        // rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        //rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
     }
     private void ResetJump()
     {
         readyToJump = true;
+
+        exitingSlope = false;
     }
 
     private void Dash()
@@ -162,9 +180,12 @@ public class PlayerMovementAdvanced : MonoBehaviour
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, (playerHeight * 0.5f) + 0.3f))
         {
+            Debug.DrawRay(transform.position, Vector3.down * slopeHit.distance, Color.green);
+           
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
         }
+        Debug.DrawRay(transform.position, Vector3.down * (playerHeight * 0.5f + 0.3f), Color.red);
         return false;
     }
 
