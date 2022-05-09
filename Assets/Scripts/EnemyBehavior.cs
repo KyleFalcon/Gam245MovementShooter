@@ -20,6 +20,8 @@ public class EnemyBehavior : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
+    public GameObject weapon;
+    public GameObject hand;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -74,6 +76,11 @@ public class EnemyBehavior : MonoBehaviour
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+    }
+
+    private void MeleeAttack()
+    {
+        weapon.transform.RotateAround(hand.transform.position, new Vector3(1, 1, 0), 270);
     }
 
     private void ResetAttack()

@@ -23,6 +23,9 @@ public class Sliding : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
 
+    private float slideVInput;
+    private float slideHInput;
+
     private bool sliding;
 
     // Start is called before the first frame update
@@ -37,6 +40,7 @@ public class Sliding : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
@@ -54,8 +58,12 @@ public class Sliding : MonoBehaviour
     }
     private void StartSlide()
     {
+        slideHInput = horizontalInput;
+        slideVInput = verticalInput;
+
         sliding = true;
 
+        //shrink player
         playerObj.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
         rb.AddForce(Vector3.down * 10f, ForceMode.Impulse);
 
@@ -64,7 +72,7 @@ public class Sliding : MonoBehaviour
 
     private void SlidingMovement()
     {
-        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        Vector3 inputDirection = orientation.forward * slideVInput + orientation.right * slideHInput;
         
         if(!pm.OnSlope() || rb.velocity.y > -0.1f)
         {
