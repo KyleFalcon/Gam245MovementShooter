@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/FPS/Scenes/MainScene.unity
     guid: d794a2ef8ba31d847ad3c19d03e2ddb9
   - enabled: 1
-    path: Assets/Scenes/basicShooting.unity
+    path: Assets/startMenu.unity
+    guid: f74de1f0c207af84bb2855f55c358e81
+  - enabled: 1
+    path: Assets/basicShooting.unity
     guid: 76683c864e816b846b5eb544eb74eb9b
   m_configObjects: {}
