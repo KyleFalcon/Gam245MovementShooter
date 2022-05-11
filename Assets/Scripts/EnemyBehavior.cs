@@ -22,11 +22,14 @@ public class EnemyBehavior : MonoBehaviour
 
     public GameObject weapon;
     public GameObject hand;
+
+    public Animator animator;
     // Start is called before the first frame update
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -71,6 +74,8 @@ public class EnemyBehavior : MonoBehaviour
 
         transform.LookAt(player);
 
+        MeleeAttack();
+
         if (!alreadyAttacked)
         {
             alreadyAttacked = true;
@@ -80,11 +85,12 @@ public class EnemyBehavior : MonoBehaviour
 
     private void MeleeAttack()
     {
-        weapon.transform.RotateAround(hand.transform.position, new Vector3(1, 1, 0), 270);
+        animator.SetBool("Swinging", true);
     }
 
     private void ResetAttack()
     {
+        animator.SetBool("Swinging", false);
         alreadyAttacked = false;
     }
 }
