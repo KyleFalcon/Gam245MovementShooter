@@ -20,9 +20,9 @@ public class EnemyBehavior : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
-    public GameObject weapon;
-    public GameObject hand;
-
+    public Transform meleeAttackPoint;
+    public float meleeAttackRange;
+    public LayerMask enemyLayers;
     public Animator animator;
     // Start is called before the first frame update
     private void Awake()
@@ -71,7 +71,6 @@ public class EnemyBehavior : MonoBehaviour
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
-
         transform.LookAt(player);
 
         MeleeAttack();
@@ -83,14 +82,25 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
-    private void MeleeAttack()
+    public void MeleeAttack()
     {
+        Collider[] hitPlayer = Physics.OverlapSphere(meleeAttackPoint.position, attackRange, enemyLayers);
         animator.SetBool("Swinging", true);
+
+        foreach(Collider player in hitPlayer)
+        {
+            Debug.Log("Hit " + player.name);
+        }
     }
 
     private void ResetAttack()
     {
         animator.SetBool("Swinging", false);
         alreadyAttacked = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);   
     }
 }
