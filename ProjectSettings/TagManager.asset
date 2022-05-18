@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Melee
   - Enemy
+  - Sniper
   layers:
   - Default
   - TransparentFX

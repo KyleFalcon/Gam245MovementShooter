@@ -20,7 +20,7 @@ public class EnemyBehavior : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
-    public Transform meleeAttackPoint;
+    public Transform weaponAttackPoint;
     public float meleeAttackRange;
     public LayerMask enemyLayers;
     public Animator animator;
@@ -73,7 +73,15 @@ public class EnemyBehavior : MonoBehaviour
         agent.SetDestination(transform.position);
         transform.LookAt(player);
 
-        MeleeAttack();
+
+        if (this.CompareTag("Melee"))
+        {
+            MeleeAttack();
+        }
+        else if (this.CompareTag("Sniper"))
+        {
+            SniperAttack();
+        }
 
         if (!alreadyAttacked)
         {
@@ -84,13 +92,18 @@ public class EnemyBehavior : MonoBehaviour
 
     public void MeleeAttack()
     {
-        Collider[] hitPlayer = Physics.OverlapSphere(meleeAttackPoint.position, attackRange, enemyLayers);
+        Collider[] hitPlayer = Physics.OverlapSphere(weaponAttackPoint.position, meleeAttackRange, enemyLayers);
         animator.SetBool("Swinging", true);
 
         foreach(Collider player in hitPlayer)
         {
             Debug.Log("Hit " + player.name);
         }
+    }
+
+    public void SniperAttack()
+    {
+        Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
     }
 
     private void ResetAttack()
@@ -101,6 +114,6 @@ public class EnemyBehavior : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);   
+        Gizmos.DrawWireSphere(weaponAttackPoint.position, meleeAttackRange);   
     }
 }

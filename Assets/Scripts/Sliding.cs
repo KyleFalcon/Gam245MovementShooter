@@ -25,7 +25,7 @@ public class Sliding : MonoBehaviour
 
     private float slideVInput;
     private float slideHInput;
-
+    private Vector3 slideOrientation;
     private bool sliding;
 
     // Start is called before the first frame update
@@ -60,7 +60,7 @@ public class Sliding : MonoBehaviour
     {
         slideHInput = horizontalInput;
         slideVInput = verticalInput;
-
+        slideOrientation = orientation.forward;
         sliding = true;
 
         //shrink player
@@ -72,7 +72,7 @@ public class Sliding : MonoBehaviour
 
     private void SlidingMovement()
     {
-        Vector3 inputDirection = orientation.forward * slideVInput + orientation.right * slideHInput;
+        Vector3 inputDirection = slideOrientation * slideVInput + orientation.right * slideHInput;
         
         if(!pm.OnSlope() || rb.velocity.y > -0.1f)
         {
