@@ -24,12 +24,16 @@ public class EnemyBehavior : MonoBehaviour
     public float meleeAttackRange;
     public LayerMask enemyLayers;
     public Animator animator;
-    // Start is called before the first frame update
+
+    public float chargeTime;
+    private float charge;
+
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        charge = chargeTime;
     }
 
     // Update is called once per frame
@@ -77,10 +81,17 @@ public class EnemyBehavior : MonoBehaviour
         if (this.CompareTag("Melee"))
         {
             MeleeAttack();
+            //alreadyAttacked = false;
         }
         else if (this.CompareTag("Sniper"))
         {
-            SniperAttack();
+            charge -= Time.deltaTime;
+            Debug.Log(charge);
+            if (charge < 0)
+            {
+                Debug.Log("shoot");
+                SniperAttack();
+            }
         }
 
         if (!alreadyAttacked)
@@ -103,7 +114,12 @@ public class EnemyBehavior : MonoBehaviour
 
     public void SniperAttack()
     {
+        RaycastHit hit;
         Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
+        bool shotSomething = Physics.Raycast(weaponAttackPoint.position, weaponAttackPoint.forward, out hit, attackRange);
+        
+        if (shotSomething) Debug.Log(hit.transform.name);
+
     }
 
     private void ResetAttack()
