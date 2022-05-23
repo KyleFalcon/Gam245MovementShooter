@@ -28,12 +28,18 @@ public class EnemyBehavior : MonoBehaviour
     public float chargeTime;
     private float charge;
 
+    public LineRenderer laserLineRenderer;
+    public float laserWidth = 0.1f;
+    public float laserMaxLength = 5f;
+
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         charge = chargeTime;
+
+        laserLineRenderer.enabled = true;
     }
 
     // Update is called once per frame
@@ -85,13 +91,11 @@ public class EnemyBehavior : MonoBehaviour
         }
         else if (this.CompareTag("Sniper"))
         {
-            charge -= Time.deltaTime;
-            Debug.Log(charge);
-            if (charge < 0)
-            {
-                Debug.Log("shoot");
-                SniperAttack();
-            }
+            float aimAngle = Vector3.Angle(weaponAttackPoint.position, player.position);
+            Debug.Log(aimAngle);
+            ShootLaserFromTargetPosition(weaponAttackPoint.position, weaponAttackPoint.forward * aimAngle, attackRange) ;
+            Debug.Log("shoot");
+            SniperAttack();
         }
 
         if (!alreadyAttacked)
@@ -106,7 +110,7 @@ public class EnemyBehavior : MonoBehaviour
         Collider[] hitPlayer = Physics.OverlapSphere(weaponAttackPoint.position, meleeAttackRange, enemyLayers);
         animator.SetBool("Swinging", true);
 
-        foreach(Collider player in hitPlayer)
+        foreach (Collider player in hitPlayer)
         {
             Debug.Log("Hit " + player.name);
         }
@@ -115,9 +119,9 @@ public class EnemyBehavior : MonoBehaviour
     public void SniperAttack()
     {
         RaycastHit hit;
-        Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
+        //Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
         bool shotSomething = Physics.Raycast(weaponAttackPoint.position, weaponAttackPoint.forward, out hit, attackRange);
-        
+
         if (shotSomething) Debug.Log(hit.transform.name);
 
     }
@@ -130,6 +134,20 @@ public class EnemyBehavior : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(weaponAttackPoint.position, meleeAttackRange);   
+        Gizmos.DrawWireSphere(weaponAttackPoint.position, meleeAttackRange);
+    }
+    void ShootLaserFromTargetPosition(Vector3 targetPosition, Vector3 direction, float length)
+    {
+        Ray ray = new Ray(targetPosition, direction);
+        RaycastHit raycastHit;
+        Vector3 endPosition = targetPosition + (length * direction);
+
+        if (Physics.Raycast(ray, out raycastHit, length))
+        {
+            endPosition = raycastHit.point;
+        }
+
+        laserLineRenderer.SetPosition(0, targetPosition);
+        laserLineRenderer.SetPosition(1, endPosition);
     }
 }
