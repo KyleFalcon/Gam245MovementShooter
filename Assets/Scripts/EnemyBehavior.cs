@@ -31,12 +31,14 @@ public class EnemyBehavior : MonoBehaviour
     public LineRenderer laserLineRenderer;
     public float laserWidth = 0.1f;
     public float laserMaxLength = 5f;
+    PlayerHealth playerHealth;
 
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        playerHealth = player.GetComponent<PlayerHealth>();
         charge = chargeTime;
 
         laserLineRenderer.enabled = true;
@@ -122,7 +124,13 @@ public class EnemyBehavior : MonoBehaviour
         //Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
         bool shotSomething = Physics.Raycast(weaponAttackPoint.position, weaponAttackPoint.forward, out hit, attackRange);
 
-        if (shotSomething) Debug.Log(hit.transform.name);
+        if (shotSomething) {
+            Debug.Log(hit.transform.name);   
+            if (hit.transform.CompareTag("Player"))
+            {
+                playerHealth.takeDamage(20);
+            }
+        }
 
     }
 
