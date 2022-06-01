@@ -14,6 +14,7 @@ public class EnemyBehavior : MonoBehaviour
     bool walkPointSet;
     public float walkPointRange;
 
+    public float attackDamage;
     public float timeBetweenAttacks;
     bool alreadyAttacked;
 
@@ -84,24 +85,22 @@ public class EnemyBehavior : MonoBehaviour
     {
         agent.SetDestination(transform.position);
         transform.LookAt(player);
-
-
-        if (this.CompareTag("Melee"))
-        {
-            MeleeAttack();
-            //alreadyAttacked = false;
-        }
-        else if (this.CompareTag("Sniper"))
-        {
-            float aimAngle = Vector3.Angle(weaponAttackPoint.position, player.position);
-            Debug.Log(aimAngle);
-            ShootLaserFromTargetPosition(weaponAttackPoint.position, weaponAttackPoint.forward * aimAngle, attackRange) ;
-            Debug.Log("shoot");
-            SniperAttack();
-        }
+        ShootLaserFromTargetPosition(weaponAttackPoint.position, weaponAttackPoint.forward, attackRange);
 
         if (!alreadyAttacked)
         {
+            //Attack Code Goes Here
+
+            if (this.CompareTag("Melee"))
+            {
+                MeleeAttack();
+                //alreadyAttacked = false;
+            }
+            else if (this.CompareTag("Sniper"))
+            {
+                Debug.Log("shoot");
+                SniperAttack();
+            }
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
@@ -115,6 +114,7 @@ public class EnemyBehavior : MonoBehaviour
         foreach (Collider player in hitPlayer)
         {
             Debug.Log("Hit " + player.name);
+            playerHealth.takeDamage(attackDamage);
         }
     }
 
@@ -128,7 +128,7 @@ public class EnemyBehavior : MonoBehaviour
             Debug.Log(hit.transform.name);   
             if (hit.transform.CompareTag("Player"))
             {
-                playerHealth.takeDamage(20);
+                playerHealth.takeDamage(attackDamage);
             }
         }
 

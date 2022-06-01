@@ -235,6 +235,7 @@ MonoBehaviour:
     m_Bits: 8
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 10
+  attackDamage: 10
   timeBetweenAttacks: 1
   sightRange: 30
   attackRange: 1
@@ -246,6 +247,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
+  chargeTime: 0
+  laserLineRenderer: {fileID: 0}
+  laserWidth: 0.1
+  laserMaxLength: 5
 --- !u!114 &1369234228409159033
 MonoBehaviour:
   m_ObjectHideFlags: 0
