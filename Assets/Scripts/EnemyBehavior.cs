@@ -26,23 +26,23 @@ public class EnemyBehavior : MonoBehaviour
     public LayerMask enemyLayers;
     public Animator animator;
 
-    public float chargeTime;
-    private float charge;
 
-    public LineRenderer laserLineRenderer;
-    public float laserWidth = 0.1f;
-    public float laserMaxLength = 5f;
     PlayerHealth playerHealth;
-
+    public GameObject projectile;
+    public LineRenderer laserLineRenderer;
+    float laserWidth = 0.1f;
+    float laserMaxLength = 5f;
     private void Awake()
     {
+
+
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerHealth = player.GetComponent<PlayerHealth>();
-        charge = chargeTime;
 
-        laserLineRenderer.enabled = true;
+        if (this.CompareTag("Sniper"))
+            laserLineRenderer.enabled = true;
     }
 
     // Update is called once per frame
@@ -101,6 +101,10 @@ public class EnemyBehavior : MonoBehaviour
                 Debug.Log("shoot");
                 SniperAttack();
             }
+            else if (this.CompareTag("Grenadier"))
+            {
+                GrenadeAttack();
+            }
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
@@ -134,6 +138,12 @@ public class EnemyBehavior : MonoBehaviour
 
     }
 
+    public void GrenadeAttack()
+    {
+        Rigidbody grenade = Instantiate(projectile, weaponAttackPoint.position, weaponAttackPoint.rotation).GetComponent<Rigidbody>();
+        grenade.AddForce(transform.forward * 10f + transform.up * 5f, ForceMode.Impulse);
+
+    }
     private void ResetAttack()
     {
         animator.SetBool("Swinging", false);

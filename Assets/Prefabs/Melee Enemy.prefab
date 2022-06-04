@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1d3b87763909f334f9318b45510651e0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 8698328346488880873}
   m_Layer: 7
   m_Name: Melee Enemy
-  m_TagString: Untagged
+  m_TagString: Melee
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,7 +140,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369234228409159031}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 44.834885, y: 3.499897, z: 2.9375381}
   m_LocalScale: {x: 1, y: 1.5, z: 1}
   m_Children:
@@ -234,23 +234,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 10
+  walkPointRange: 20
   attackDamage: 10
   timeBetweenAttacks: 1
   sightRange: 30
   attackRange: 1
   playerInSightRange: 0
   playerInAttackRange: 0
-  weaponAttackPoint: {fileID: 0}
+  weaponAttackPoint: {fileID: 6308633775145824768}
   meleeAttackRange: 0.7
   enemyLayers:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
-  chargeTime: 0
+  projectile: {fileID: 0}
   laserLineRenderer: {fileID: 0}
-  laserWidth: 0.1
-  laserMaxLength: 5
 --- !u!114 &1369234228409159033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,7 +272,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 15
+  m_Speed: 30
   m_Acceleration: 50
   avoidancePriority: 50
   m_AngularSpeed: 120
