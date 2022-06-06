@@ -240,6 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
+  isEnemy: 0
 --- !u!1 &1369234228409159031
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,18 +372,18 @@ MonoBehaviour:
   attackDamage: 10
   timeBetweenAttacks: 1
   sightRange: 30
-  attackRange: 1
-  playerInSightRange: 0
-  playerInAttackRange: 0
+  attackRange: 2
+  playerInSightRange: 1
+  playerInAttackRange: 1
   lookSpeed: 20
   weaponAttackPoint: {fileID: 6308633775145824768}
-  meleeAttackRange: 0.7
+  meleeAttackRange: 2
   enemyLayers:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
   projectile: {fileID: 0}
-  laserLineRenderer: {fileID: 0}
+  laserLineRenderer: {fileID: 1558871581}
   laserWidth: 0.1
 --- !u!114 &1369234228409159033
 MonoBehaviour:
@@ -397,6 +398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 20
+  isEnemy: 1
 --- !u!195 &1369234228409159030
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -407,8 +409,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 30
-  m_Acceleration: 50
+  m_Speed: 15
+  m_Acceleration: 30
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 2

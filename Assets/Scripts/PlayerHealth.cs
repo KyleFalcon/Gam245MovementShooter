@@ -7,8 +7,8 @@ using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth;
-    public float currentHealth;
+    public int maxHealth;
+    public int currentHealth;
 
     public TMP_Text HP;
     Rigidbody rb;
@@ -29,10 +29,12 @@ public class PlayerHealth : MonoBehaviour
 
     public void takeDamage(float dmg)
     {
-        currentHealth -= dmg;
+        currentHealth -= (int)dmg;
     }
     public void playerDeath()
     {
-        //SceneManager.LoadScene(0);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        SceneManager.LoadScene(2);
     }
 }
