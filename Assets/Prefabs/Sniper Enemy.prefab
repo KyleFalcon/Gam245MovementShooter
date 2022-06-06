@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 4032433867616434289}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 51.86, y: 26.5, z: 55.92}
-  m_LocalScale: {x: 1, y: 1.5, z: 1}
+  m_LocalScale: {x: 1.5, y: 2, z: 1.5}
   m_Children:
   - {fileID: 4032433867904017177}
   - {fileID: 7500139012278104198}
@@ -117,12 +117,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 4032433867616434288}
   player: {fileID: 0}
+  playerHead: {fileID: 0}
   Ground:
     serializedVersion: 2
     m_Bits: 64
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 8
+  hand: {fileID: 0}
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 0
   attackDamage: 20
@@ -131,16 +133,16 @@ MonoBehaviour:
   attackRange: 300
   playerInSightRange: 0
   playerInAttackRange: 0
+  lookSpeed: 1
   weaponAttackPoint: {fileID: 7843263309148816162}
   meleeAttackRange: 0.7
   enemyLayers:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
-  chargeTime: 3
+  projectile: {fileID: 0}
   laserLineRenderer: {fileID: 7843263310266811807}
-  laserWidth: 0.1
-  laserMaxLength: 300
+  laserWidth: 0.5
 --- !u!114 &4032433867616434303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,8 +646,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.0974026
-        value: 0.109004796
+        time: 0.30952474
+        value: 0.33649385
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -658,7 +660,7 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 0.23921566, g: 0.41212097, b: 0.9019608, a: 1}
-      key1: {r: 0.92156863, g: 0.2235294, b: 0.70418596, a: 1}
+      key1: {r: 1, g: 0, b: 0.044383526, a: 1}
       key2: {r: 1, g: 0, b: 0.4361801, a: 0}
       key3: {r: 1, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -666,7 +668,7 @@ LineRenderer:
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 24865
+      ctime1: 49922
       ctime2: 65535
       ctime3: 65535
       ctime4: 0

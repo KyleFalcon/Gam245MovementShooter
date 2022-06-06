@@ -28,6 +28,7 @@ public class Sliding : MonoBehaviour
     private Vector3 slideOrientation;
     private bool sliding;
 
+    public ParticleSystem sparks;
     // Start is called before the first frame update
     void Start()
     {
@@ -73,7 +74,8 @@ public class Sliding : MonoBehaviour
     private void SlidingMovement()
     {
         Vector3 inputDirection = slideOrientation * slideVInput + orientation.right * slideHInput;
-        
+
+        //Instantiate(sparks, transform);
         if(!pm.OnSlope() || rb.velocity.y > -0.1f)
         {
             rb.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);

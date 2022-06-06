@@ -8,7 +8,9 @@ public class EnemyBehavior : MonoBehaviour
 
     public NavMeshAgent agent;
     public Transform player;
+    public Transform playerHead;
     public LayerMask Ground, whatIsPlayer;
+    public Transform hand;
 
     public Vector3 walkPoint;
     bool walkPointSet;
@@ -20,6 +22,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
+    public float lookSpeed = 1f;
 
     public Transform weaponAttackPoint;
     public float meleeAttackRange;
@@ -30,24 +33,33 @@ public class EnemyBehavior : MonoBehaviour
     PlayerHealth playerHealth;
     public GameObject projectile;
     public LineRenderer laserLineRenderer;
-    float laserWidth = 0.1f;
-    float laserMaxLength = 5f;
+    public float laserWidth = 0.1f;
+    private float laserMaxLength = 5f;
+
     private void Awake()
     {
-
-
         player = GameObject.Find("Player").transform;
+        playerHead = player.GetChild(0).GetChild(1);
+        hand = transform.GetChild(1);
+        Debug.Log(hand.name);
+
+
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerHealth = player.GetComponent<PlayerHealth>();
-
+       
+        
         if (this.CompareTag("Sniper"))
             laserLineRenderer.enabled = true;
+        else
+        {
+            laserLineRenderer.enabled = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
@@ -84,8 +96,11 @@ public class EnemyBehavior : MonoBehaviour
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
+
+        //delayedLook(transform, player, lookSpeed);
         transform.LookAt(player);
-        ShootLaserFromTargetPosition(weaponAttackPoint.position, weaponAttackPoint.forward, attackRange);
+        hand.LookAt(playerHead);
+        ShootLaserFromTargetPosition(weaponAttackPoint.position, weaponAttackPoint.forward + new Vector3(0, 0.0015f, 0), attackRange);
 
         if (!alreadyAttacked)
         {
@@ -94,11 +109,9 @@ public class EnemyBehavior : MonoBehaviour
             if (this.CompareTag("Melee"))
             {
                 MeleeAttack();
-                //alreadyAttacked = false;
             }
             else if (this.CompareTag("Sniper"))
             {
-                Debug.Log("shoot");
                 SniperAttack();
             }
             else if (this.CompareTag("Grenadier"))
@@ -114,7 +127,6 @@ public class EnemyBehavior : MonoBehaviour
     {
         Collider[] hitPlayer = Physics.OverlapSphere(weaponAttackPoint.position, meleeAttackRange, enemyLayers);
         animator.SetBool("Swinging", true);
-
         foreach (Collider player in hitPlayer)
         {
             Debug.Log("Hit " + player.name);
@@ -125,9 +137,7 @@ public class EnemyBehavior : MonoBehaviour
     public void SniperAttack()
     {
         RaycastHit hit;
-        //Debug.DrawRay(weaponAttackPoint.position, weaponAttackPoint.forward * attackRange, Color.red);
         bool shotSomething = Physics.Raycast(weaponAttackPoint.position, weaponAttackPoint.forward, out hit, attackRange);
-
         if (shotSomething) {
             Debug.Log(hit.transform.name);   
             if (hit.transform.CompareTag("Player"))
@@ -140,8 +150,12 @@ public class EnemyBehavior : MonoBehaviour
 
     public void GrenadeAttack()
     {
-        Rigidbody grenade = Instantiate(projectile, weaponAttackPoint.position, weaponAttackPoint.rotation).GetComponent<Rigidbody>();
-        grenade.AddForce(transform.forward * 10f + transform.up * 5f, ForceMode.Impulse);
+        GameObject grenade = Instantiate(projectile, weaponAttackPoint.position, weaponAttackPoint.rotation);
+        Grenade grenadeScript = grenade.GetComponent<Grenade>();
+        grenadeScript.damage = attackDamage;
+
+        Rigidbody grenadeRB = grenade.GetComponent<Rigidbody>();
+        grenadeRB.AddForce(transform.forward * 15f + transform.up * 2f, ForceMode.Impulse);
 
     }
     private void ResetAttack()
@@ -167,5 +181,12 @@ public class EnemyBehavior : MonoBehaviour
 
         laserLineRenderer.SetPosition(0, targetPosition);
         laserLineRenderer.SetPosition(1, endPosition);
+    }
+
+    void delayedLook(Transform transform, Transform target, float speed)
+    {
+        Vector3 relativePos = (target.position - transform.position);
+        Quaternion toRotation = Quaternion.LookRotation(relativePos);
+        transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, speed * Time.deltaTime);
     }
 }
